@@ -1,0 +1,66 @@
+﻿@{
+    //import file Layout.cshtml vào đây
+    Layout = "~/Areas/Admin/Views/Shared/Layout.cshtml";
+}
+@using Assignment.Models
+@functions {
+    public MyDbContext db = new MyDbContext();
+    //lay cac danh muc cap 0
+    public List<ItemCategory> GetCategories()
+    {
+        List<ItemCategory> listRecord = db.Categories.Where(item=>item.ParentId == 0).OrderByDescending(item => item.Id).ToList();
+        return listRecord;
+    }
+}
+<div class="col-md-12">
+    <div class="panel panel-primary">
+        <div class="panel-heading">Add edit category</div>
+        <div class="panel-body">
+            @* autocomplete="off" sẽ bỏ các thông tin catche của trình duyệt lưu vào ô textbox *@
+            <form method="post" action="@ViewBag.action" autocomplete="off">
+                <!-- rows -->
+                <div class="row" style="margin-top:5px;">
+                    <div class="col-md-2">Name</div>
+                    <div class="col-md-10">
+                        <input type="text" value="@if(Model != null){
+                        <text>@Model["Name"]"</text>}" name="name" class="form-control" required>
+                    </div>
+                </div>
+                <!-- end rows -->
+                <!-- rows -->
+                <div class="row" style="margin-top:5px;">
+                    <div class="col-md-2">Category</div>
+                    <div class="col-md-10">
+                        @{
+                            List<ItemCategory> listCategories = GetCategories();
+                        }
+                        <select name="ParentId">
+                            <option value="0"></option>
+                            @foreach (var item in listCategories)
+                            {
+                                <option @if(Model != null && Convert.ToInt32(Model["ParentId"]) == item.Id){<text>selected</text>} value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <!-- end rows -->
+                <!-- rows -->
+                <div class="row" style="margin-top:5px;">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-10">
+                        <input type="checkbox" name="DisplayHomePage" id="DisplayHomePage" @if(Model != null && Convert.ToInt32(Model["DisplayHomePage"]) == 1){<text>checked</text>}> <label for="DisplayHomePage">Display Home Page</label>
+                    </div>
+                </div>
+                <!-- end rows -->
+                <!-- rows -->
+                <div class="row" style="margin-top:5px;">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-10">
+                        <input type="submit" value="Process" class="btn btn-primary">
+                    </div>
+                </div>
+                <!-- end rows -->
+            </form>
+        </div>
+    </div>
+</div>

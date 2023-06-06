@@ -1,0 +1,83 @@
+﻿@{
+	Layout = "~/Views/Shared/Layout2.cshtml";
+}
+@using Assignment.Models
+@using System.Globalization;
+@using Assignment.MyFolder;
+@using X.PagedList.Mvc.Core
+@using System.IO
+@model X.PagedList.IPagedList<ItemProduct>
+@functions{
+	public MyDbContext db = new MyDbContext();
+	
+}
+<style>
+    .wrap-shop-control{
+        margin-bottom: 10px;
+        margin-top: 0px !important;
+    }
+</style>
+<div class="col-md-9">
+    <div class="main-content">
+        <div class="main-header">
+            <div class="wrap-shop-control">
+	                
+	            <h1 class="shop-title">Tìm kiếm giá từ @string.Format(new CultureInfo("vi-VN"), "{0:C0}", @ViewBag._fromPrice) - đến @string.Format(new CultureInfo("vi-VN"), "{0:C0}", @ViewBag._toPrice)</h1>
+
+	            <div class="wrap-right">
+
+		            <div class="sort-item orderby ">
+			            
+		            </div>
+	            </div>
+            </div><!--end wrap shop control-->
+        </div>
+        <div class="product-view">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                     <div class="col-md-4">
+                        <div class="product-border">
+                            <div class="product-thumbnail">
+                                <a href="/Products/Detail/@item.Id"><img src="~/Upload/Products/@item.Photo"></a>
+                            </div>
+                            <div class="flash-sale">
+                                @{
+			                        List<ItemAdv> list_icon_sales = MyClass.GetAdv(2);
+		                        }
+		                        @foreach(var icon_sale in list_icon_sales)
+		                        {
+				                    <img src="~/Upload/Adv/@icon_sale.Photo" alt="" >
+		                        }
+                            </div>
+                            <div class="product-info">
+                                <h3 class="producut-name">
+                                    <a class="spbanchay" href="/Products/Detail/@item.Id">@item.Content</a>
+                                </h3>
+                                <div class="product-price">
+                                    <span class="sale">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", item.Discount)</span>
+                                    <span class="del">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", item.Price)</span>
+                                </div>
+                                <!-- rating -->
+					            <div class="wrap-price">
+						            <div class="product-price">
+							            <a href="/Products/Rating/@item.Id?star=1" style="margin-right: 3px;"><i class="fa fa-star" style="color:#efce4a;"></i></a>
+                                        <a href="/Products/Rating/@item.Id?star=2" style="margin-right: 3px;"><i class="fa fa-star" style="color:#efce4a;"></i></a>
+                                        <a href="/Products/Rating/@item.Id?star=3" style="margin-right: 3px;"><i class="fa fa-star" style="color:#efce4a;"></i></a>
+                                        <a href="/Products/Rating/@item.Id?star=4" style="margin-right: 3px;"><i class="fa fa-star" style="color:#efce4a;"></i></a>
+                                        <a href="/Products/Rating/@item.Id?star=5" style="margin-right: 3px;"><i class="fa fa-star" style="color:#efce4a;"></i></a>
+						            </div>
+					            </div>
+					            <!-- /rating -->
+					            <a href="/Cart/Buy/@item.Id" class="btn add-to-cart">Add To Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="wrap-pagination-info">
+	        @Html.PagedListPager(Model, p => Url.Action("SearchPrice","Search", new{p,key=ViewBag._key}))
+        </div>
+    </div>
+</div>

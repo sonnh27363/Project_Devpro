@@ -1,0 +1,128 @@
+.box-header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+.box-title {
+    font-size: 38px;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+h1{
+    margin: 0 0 15px;
+    line-height: 1.5;
+}
+.box-content{
+    margin-top: 80px;
+}
+.product-header {
+    margin-bottom: 30px;
+}
+.sort-box {
+    text-align: center;
+}
+.sort-box>li {
+    display: inline-block;
+    margin: 0 3px 10px;
+}
+.form-select{
+    border-radius: 30px;
+    width: 250px;
+    height: 40px;
+    font-size: 14px;
+    padding-left: 20px;
+}
+.icon-sale {
+    width: 40px;
+    height: 40px;
+    background: url(https://zenwatch.vn/theme/default/images/bg-sale.png) 0 0/100% no-repeat;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 40px;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-left: 20px;
+    margin-top: 5px;
+}
+.icon-installment{
+    padding: 2px 5px;
+    background: #24c3fd;
+    color: #fff;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 700;
+    position: absolute;
+    left: 0;
+    margin-top: -25px;
+    margin-left: 20px;
+}
+.product-title {
+    margin-bottom: 5px;
+    padding: 0 30px;
+    font-size: 18px;
+}
+.product-title a {
+    color: #212121;
+    font-weight: 500;
+    text-decoration: none;
+}
+.product-title a:hover {
+    color: #a37e2c;
+}
+h3{
+    margin: 0 0 15px;
+    font-size: inherit;
+    line-height: 1.5;
+}
+.product-img img:hover{
+    border: 1px solid rgb(228, 222, 222);
+}
+.product-info {
+    margin-top: 20px;
+    text-align: center;
+}
+.product-price .gia-cu {
+    color: #5e5e5e;
+    font-size: 16px;
+    text-decoration: line-through;
+}
+.product-price .gia {
+    color: red;
+    font-size: 20px;
+    font-weight: 600;
+}
+.product-price p {
+    margin: 0;
+}
+.btn-xem-chi-tiet {
+    width: 140px;
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 30px;
+}
+.button {
+    background: #a37e2c;
+    color: #fff!important;
+    text-align: center;
+}
+.row {
+    margin-top: 50px;
+}
+.btn-xem-them{
+    width: 285px;
+    height: 50px;
+    display: block;
+    margin: auto;
+    border: 0;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-top: 30px;
+}
+button:hover{
+    background: crimson;
+}

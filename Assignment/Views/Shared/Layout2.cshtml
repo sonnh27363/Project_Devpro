@@ -1,0 +1,285 @@
+﻿@using Assignment.Models
+@using System.Globalization;
+@functions{
+	public MyDbContext db = new MyDbContext();
+	public List<ItemCategory> Categories()
+	{
+		List<ItemCategory> list_record = db.Categories.Where(item => item.ParentId == 0).OrderByDescending(item => item.Id).ToList();
+		return list_record;
+	}
+	public List<ItemCategory> SubCategories(int category_id)
+	{
+		List<ItemCategory> list_record = db.Categories.Where(item => item.ParentId == category_id).OrderByDescending(item => item.Id).ToList();
+		return list_record;
+	}
+	public int GetNumberProduct(int category_id)
+	{
+		int number_product = (from product in db.Products join category_product in db.CategoriesProducts on product.Id equals category_product.ProductId join category in db.Categories on category_product.CategoryId equals category.Id where category_product.CategoryId == category_id select product).Count();
+		return number_product;
+	}
+    //Lấy 3 sản phẩm nổi bật (Hot == 1)
+	public List<ItemProduct> ProductsHot()
+	{
+		List<ItemProduct> list_record = db.Products.Where(item => item.Hot == 1).OrderByDescending(item=>item.Id).Skip(0).Take(5).ToList();
+		return list_record;
+	}
+    public List<ItemTag> GetTags()
+	{
+		List<ItemTag> list_record = db.Tags.OrderByDescending(item => item.Id).ToList();
+		return list_record;
+	}
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+    <Link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/Frontend/css/TrangChu.css">
+    <link rel="stylesheet" href="~/Frontend/css/SanPham.css">
+    <link rel="icon" type="image/png" href="~/Admin/img/favicon.png">
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,400italic,700,700italic,900,900italic&amp;subset=latin,latin-ext" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Open%20Sans:300,400,400italic,600,600italic,700,700italic&amp;subset=latin,latin-ext" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="~/Frontend/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="~/Frontend/css/style.css">
+</head>
+
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/647cbc0f7957702c744bb5df/1h23jt7at';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+
+<body>
+    <!--header-->
+	@*import file Header.cshtml vào đây*@
+	@Html.Partial("~/Views/Shared/Header.cshtml")
+    <section class="bread-crumb">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="menu-con">
+                        <li class="home">
+                            <a href="/Home">Trang chủ</a>
+                            <span>
+                                &nbsp;
+                                <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                &nbsp;
+                            </span>
+                        </li>
+                        <li>
+                            <strong>
+                                <span>Tất cả sản phẩm</span>
+                            </strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <main id="main">
+        <div class="container">
+            <div class="row">
+                <aside class="col-md-3">
+                    <div class="menu-left">
+                        <div class="widget mercado-widget categories-widget">
+						<h2 class="widget-title">Phân loại</h2>
+						<div class="widget-content">
+							<ul class="list-category">
+								@{
+									List<ItemCategory> list_categories = Categories();
+								}
+								@foreach (var item in list_categories)
+								{
+									List<ItemCategory> list_sub_categories = SubCategories(item.Id);
+									<li class="category-item has-child-cate">
+										<a href="/Products/Category/@item.Id" class="cate-link">@item.Name (@GetNumberProduct(item.Id))</a>
+										@if(list_sub_categories.Count > 0)
+										{
+											<span class="toggle-control">+</span>
+											<ul class="sub-cate">
+												@foreach(var itemSub in list_sub_categories)
+												{
+													<li class="category-item"><a href="/Products/Category/@itemSub.Id" class="cate-link">@itemSub.Name (@GetNumberProduct(itemSub.Id))</a></li>
+												}
+											</ul>
+										}
+									</li>
+								}
+							</ul>
+						</div>
+					</div><!-- Categories widget-->	
+                    </div>
+                    <div class="menu-left">
+                        <div class="aside-title">
+                            <h2>Thương hiệu</h2>
+                        </div>
+                        <div class="aside-content">
+                            <nav class="nav-category">
+                                <ul>
+                                    @{
+									    List<ItemTag> list_tags = GetTags();
+									    int tag_id = 0;
+									    try
+									    {
+										    //lấy id truyền từ url 
+										    tag_id = Convert.ToInt32(Context.Request.RouteValues["id"]);
+									    }
+									    catch {;}
+								    }
+								    @foreach (var item in list_tags)
+								    {
+									    <li class="list-item"><a class="filter-link @if (item.Id == tag_id) { <text>active</text>}" href="/Search/SearchTag/@item.Id">@item.Name</a></li>
+								    }
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="menu-left">
+                        <div class="aside-title">
+                            <h2>Khoảng giá</h2>
+                        </div>
+                        <div class="aside-content">
+                            <div class="widget-content">
+							    <input type="number" min="0" id="fromPrice" style="width:100px; border:1px solid #444444;" placeholder="From price"> - <input type="number" min="0" id="toPrice"  style="width:100px; border:1px solid #444444" placeholder="To price"> <button onclick="location.href='/Search/SearchPrice?fromPrice='+document.getElementById('fromPrice').value+'&toPrice='+document.getElementById('toPrice').value;" class="filter-submit">Filter</button>
+						    </div>
+
+                            <nav class="nav-category">
+                                <ul>
+                                    <li>
+                                        <span>
+                                            <label for="">
+                                                <input type="checkbox" onclick="location.href='/Search/SearchPrice?fromPrice='+document.getElementById('fromPrice').value+'&toPrice='+document.getElementById('toPrice').value;"> Giá dưới 100.000đ
+                                            </label>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span>
+                                            <label for="">
+                                                <input type="checkbox" onclick=""> 100.000đ - 200.000đ
+                                            </label>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span>
+                                            <label for="">
+                                                <input type="checkbox"> 200.000đ - 300.000đ
+                                            </label>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span>
+                                            <label for="">
+                                                <input type="checkbox"> 300.000đ - 500.000đ
+                                            </label>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span>
+                                            <label for="">
+                                                <input type="checkbox"> 500.000đ - 1.000.000đ
+                                            </label>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span>
+                                            <label for="">
+                                                <input type="checkbox"> Giá trên 1.000.000đ
+                                            </label>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="menu-left">
+                        <div class="aside-title">
+                            <h2 class="mausac">Màu sắc</h2>
+                        </div>
+                        <div class="aside-content">
+                            <nav class="nav-category">
+                                <ul class="mau-sac">
+                                    <a href="#">
+                                        <li class="do"></li>
+                                    </a>
+                                    <a href="#">
+                                        <li class="vang"></li>
+                                    </a>
+                                    <a href="#">
+                                        <li class="tim"></li>
+                                    </a>
+                                    <a href="#">
+                                        <li class="xanh"></li>
+                                    </a>
+                                    <a href="#">
+                                        <li class="hong"></li>
+                                    </a>
+                                    <a href="#">
+                                        <li class="cam"></li>
+                                    </a>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="menu-left">
+                        <div class="aside-title1">
+                            <h2><a class="title" href="#">Sản phẩm nổi bật</a></h2>
+                        </div>
+                        <div class="aside-content">
+                            <div class="product-list">
+                                <ul>
+                                    @{
+									    List<ItemProduct> list_products_hot = ProductsHot();
+								    }
+                                    @foreach(var item in list_products_hot)
+                                    {
+                                        <li class="spnoibat">
+                                            <div class="product-item">
+                                                <a href="#"><img
+                                                        src="~/Upload/Products/@item.Photo"
+                                                        alt=""></a>
+                                                <div class="item-info">
+                                                    <h3><a href="/Products/Detail/@item.Id">@item.Content</a></h3>
+                                                    <div class="price-box">
+                                                        <span>@string.Format(new CultureInfo("vi-VN"), "{0:C0}", item.Discount)</span>
+                                                        <del>@string.Format(new CultureInfo("vi-VN"), "{0:C0}", item.Price)</del>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="xem-them">
+                        <a href="#">Xem thêm <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                    </div>
+                </aside>
+                @RenderBody()
+            </div>
+        </div>
+	</main>
+
+   @*import file Footer.cshtml vào đây*@
+	@Html.Partial("~/Views/Shared/Footer.cshtml")
+    <!-- Footer -->
+</body>
+
+</html>

@@ -1,0 +1,366 @@
+﻿@{
+	Layout = "~/Views/Shared/Layout1.cshtml";
+}
+@using Assignment.Models
+@using System.Globalization;
+@using Assignment.MyFolder;
+
+@functions{
+	public MyDbContext db = new MyDbContext();
+
+    //Thương hiệu
+	public List<ItemSlide> Slides()
+	{
+		List<ItemSlide> list_record = db.Slides.OrderByDescending(item => item.Id).ToList();
+        return list_record;
+	}
+
+    //Lấy danh mục hiển thị trang chủ (DisplayHomePage = 1)
+	public List<ItemCategory> Categories()
+	{
+		List<ItemCategory> list_record = db.Categories.Where(item => item.DisplayHomePage == 1).OrderByDescending(item=>item.Id).ToList();
+		return list_record;
+	}
+
+	//Lấy 4 sản phẩm giảm thuộc danh mục 
+	public List<ItemProduct> ProductsInCategory(int _CategoryId)
+	{
+		var list_record = from product in db.Products join category_product in db.CategoriesProducts on product.Id equals category_product.ProductId join category in db.Categories on category_product.CategoryId equals category.Id where category_product.CategoryId == _CategoryId select product;
+		return list_record.Skip(0).Take(4).ToList();
+	}
+
+    //Lấy 3 sản phẩm giảm giá
+	public List<ItemProduct> ProductsDiscount()
+	{
+		List<ItemProduct> list_record = db.Products.Where(item => item.Discount > 0).OrderByDescending(item=>item.Id).Skip(0).Take(3).ToList();
+		/*
+		 * Skip(0) -> Từ bản ghi thứ 0
+		 * Take(10) -> Lấy 10 bản ghi
+		 */
+		return list_record;
+	}
+
+    //Lấy 3 sản phẩm nổi bật (Hot == 1)
+	public List<ItemProduct> ProductsHot()
+	{
+		List<ItemProduct> list_record = db.Products.Where(item => item.Hot == 1).OrderByDescending(item=>item.Id).Skip(0).Take(3).ToList();
+		return list_record;
+	}
+    //Lấy 3 sản phẩm mới nhất
+	public List<ItemProduct> ProductsNew()
+	{
+		List<ItemProduct> list_record = db.Products.OrderByDescending(item => item.Id).Skip(0).Take(3).ToList();
+        return list_record;
+	}
+    //Lấy 3 tin tức nổi bật (Hot == 1)
+	public List<ItemNews> LatesNews()
+	{
+		List<ItemNews> list_record = db.News.Where(item => item.Hot == 1).OrderByDescending(item=>item.Id).Skip(0).Take(3).ToList();
+		return list_record;
+	}
+}
+
+<section>
+    <div class="banner">
+        @{
+			List<ItemAdv> list_adv1 = MyClass.GetAdv(1);
+		}
+		@foreach(var item in list_adv1)
+		{
+			<a href="#" class="link-banner banner-effect-1">
+				<img src="~/Upload/Adv/@item.Photo" alt="" >
+			</a>
+		}
+    </div>
+    <div class="brand">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="heading">
+                        <h2>
+                            <span>
+                                THƯƠNG HIỆU
+                                <br>
+                                <span class="noi-bat">Nổi bật</span>
+                            </span>
+                        </h2>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="carousel">
+                        <ul>
+
+                            @{
+						        List<ItemSlide> list_slide = Slides();
+					        }
+                            @foreach (var item in list_slide)
+                            {
+                                <li>
+                                    <a href="#"><img
+                                            src="~/Upload/Slides/@item.Photo"></a>
+                                </li>
+                            }
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+    <div class="section-moi">
+        <div class="container">
+            <div class="row">
+                <div class="content-sec">
+                    <div class="col-md-3">
+                        <div class="home-banner">
+                            <h2><a href="#">SẢN PHẨM MỚI</a></h2>
+                            <a href="#" class="btn btn-primary btn-shop">Xem thêm</a>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="border-wrap">
+                            <ul>
+                                @{
+									List<ItemProduct> list_products_new = ProductsNew();
+								}
+                                @foreach(var item in list_products_new)
+                                {
+                                    <li>
+                                        <div class="product-border">
+                                            <div class="product-thumbnail">
+                                                <a href="/Products/Detail/@item.Id"><img src="~/Upload/Products/@item.Photo"></a>
+                                            </div>
+                                            <div class="flash-sale">
+                                                @{
+			                                        List<ItemAdv> list_icon_sales = MyClass.GetAdv(2);
+		                                        }
+		                                        @foreach(var icon_sale in list_icon_sales)
+		                                        {
+				                                    <img src="~/Upload/Adv/@icon_sale.Photo" alt="" >
+		                                        }
+                                            </div>
+                                            <div class="product-info">
+                                                <h3 class="producut-name">
+                                                    <a class="spbanchay" href="/Products/Detail/@item.Id">@item.Content</a>
+                                                </h3>
+                                                <div class="product-price">
+                                                    <span class="sale">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", item.Discount)</span>
+                                                    <span class="del">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", item.Price)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+    <div class="section-noibat">
+        <div class="container">
+            <div class="row">
+                <div class="content-sec">
+                    <div class="col-md-3">
+                        <div class="home-banner">
+                            <h2><a href="#">SẢN PHẨM NỔI BẬT</a></h2>
+                            <a href="#" class="btn btn-primary btn-shop">Xem thêm</a>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="border-wrap">
+                            <ul>
+                                @{
+									List<ItemProduct> list_products_hot = ProductsHot();
+								}
+                                @foreach(var item in list_products_hot)
+                                {
+                                    <li>
+                                        <div class="product-border">
+                                            <div class="product-thumbnail">
+                                                <a href="/Products/Detail/@item.Id"><img src="~/Upload/Products/@item.Photo"></a>
+                                            </div>
+                                            <div class="flash-sale">
+                                                @{
+			                                        List<ItemAdv> list_icon_sales = MyClass.GetAdv(2);
+		                                        }
+                                                @foreach(var icon_sale in list_icon_sales)
+		                                        {
+				                                    <img src="~/Upload/Adv/@icon_sale.Photo" alt="" >
+		                                        }
+                                            </div>
+                                            <div class="product-info">
+                                                <h3 class="producut-name">
+                                                    <a class="spbanchay" href="/Products/Detail/@item.Id">@item.Content</a>
+                                                </h3>
+                                                <div class="product-price">
+                                                    <span class="sale">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", item.Discount)</span>
+                                                    <span class="del">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", item.Price)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+    <div class="container">
+        <div class="hotdeal">
+            <div class="heading-hotdeal">
+                <h2 class="title"><a href="#">SẢN PHẨM THEO DANH MỤC</a></h2>
+            </div>
+        </div>
+        @{
+            List<ItemCategory> list_categories = Categories();
+        }
+        @foreach (var item_category in list_categories)
+        {
+            <div class="border-wrap">
+                <div class="heading-category">
+                    <h5 class="category"><a href="#">@item_category.Name</a></h5>
+                </div>
+                <ul>
+                    @{
+                        List<ItemProduct> list_products_in_category = ProductsInCategory(item_category.Id);
+                    }
+                    @foreach (var item in list_products_in_category)
+                    {
+                        <li>
+                            <div class="product-border">
+                                <div class="product-thumbnail">
+                                    <a href="/Products/Detail/@item.Id"><img
+                                            src="~/Upload/Products/@item.Photo"></a>
+                                </div>
+                                <div class="flash-sale">
+                                    @{
+			                            List<ItemAdv> list_icon_sales = MyClass.GetAdv(2);
+		                            }
+                                    @foreach(var icon_sale in list_icon_sales)
+		                            {
+				                        <img src="~/Upload/Adv/@icon_sale.Photo" alt="" >
+		                            }
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="producut-name">
+                                        <a class="spbanchay" href="#">@item.Content"</a>
+                                    </h3>
+                                    <div class="product-price">
+                                        <span class="sale">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", item.Discount)</span>
+                                        <span class="del">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", item.Price)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+</section>
+<section>
+    <div class="section-hot">
+        <div class="container">
+            <div class="row">
+                <div class="content-sec">
+                    <div class="col-md-3">
+                        <div class="home-banner">
+                            <h2><a href="#">SẢN PHẨM GIẢM GIÁ</a></h2>
+                            <a href="#" class="btn btn-primary btn-shop">Xem thêm</a>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="border-wrap">
+                            <ul>
+                                @{
+						            List<ItemProduct> list_products_Discount = ProductsDiscount();
+					            }
+                                @foreach(var item in list_products_Discount)
+                                {
+                                    <li>
+                                        <div class="product-border">
+                                            <div class="product-thumbnail">
+                                                <a href="/Products/Detail/@item.Id"><img
+                                                        src="~/Upload/Products/@item.Photo"></a>
+                                            </div>
+                                            <div class="flash-sale">
+                                                @{
+			                                        List<ItemAdv> list_icon_sales = MyClass.GetAdv(2);
+		                                        }
+                                                @foreach(var icon_sale in list_icon_sales)
+		                                        {
+				                                    <img src="~/Upload/Adv/@icon_sale.Photo" alt="" >
+		                                        }
+                                            </div>
+                                            <div class="product-info">
+                                                <h3 class="producut-name">
+                                                    <a class="spbanchay" href="#">@item.Content</a>
+                                                </h3>
+                                                <div class="product-price">
+                                                    <span class="sale">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", item.Discount)</span>
+                                                    <span class="del">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", item.Price)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+    <div class="container">
+        <div class="section-news">
+            <div class="heading">
+                <h2 class="title"><a href="#">TIN TỨC & KHUYẾN MÃI</a></h2>
+            </div>
+            <div class="content-news">
+                <ul>
+                    @{
+						List<ItemNews> list_news = LatesNews();
+					}
+                    @foreach(var item in list_news)
+                    {
+                        <li>
+                            <div class="product-news">
+                                <div class="product-img">
+                                    <a href="/News/Details/@item.Id"><img src="~/Upload/News/@item.Photo" alt=""> </a>
+                                    <div class="content-left">
+                                        <span class="top-content">23</span>
+                                        <span class="bot-content">Tháng 10</span>
+                                    </div>
+                                </div>
+                                <div class="product-info">
+                                    <h3><a href="/News/Details/@item.Id">@Html.Raw(item.Name)</a></h3>
+                                    <span class="time-post">
+                                        <i class="fa fa-user" aria-hidden="true"></i>
+                                        Đăng bởi: Cool Team
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="product-cmtt">
+                                <p>
+                                    @Html.Raw(item.Content)
+                                </p>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>

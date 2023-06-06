@@ -1,0 +1,79 @@
+﻿@{
+    //load file Layout.cshtml vao day
+    Layout = "~/Areas/Admin/Views/Shared/Layout.cshtml";
+}
+@* Để phân trang thì using các đối tượng sau *@
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@* Có thể định nghĩa các hàm, viết code trong file .cshtml *@
+@using Assignment.Models
+@functions {
+    public MyDbContext db = new MyDbContext();
+    public List<ItemCategory> CategoriesSub(int _CategoryId)
+    {
+        List<ItemCategory> list_record = db.Categories.Where(item => item.ParentId == _CategoryId).ToList();
+        return list_record;
+    }
+}
+<div class="col-md-12">
+    <div style="margin-bottom:5px;">
+        <a href="/Admin/Categories/Create" class="btn btn-primary">Add category</a>
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">List category</div>
+        <div class="panel-body">
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <th>Name</th>
+                    <th style="width:150px;">Display Home Page</th>
+                    <th style="width:100px;"></th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td style="text-align:center">
+                            @if (item.DisplayHomePage == 1)
+                            {
+                                <text>
+                                    <span class="glyphicon glyphicon-check"></span>
+                                </text>
+                            }
+                        </td>
+                        <td style="text-align:center;">
+                            <a href="/Admin/Categories/Update/@item.Id">Edit</a>&nbsp;
+                            <a href="/Admin/Categories/Delete/@item.Id" onclick="return window.confirm('Are you sure?');">Delete</a>
+                        </td>
+                    </tr>
+                    List<ItemCategory> list_categories_sub = CategoriesSub(item.Id);
+                    foreach (ItemCategory itemSub in list_categories_sub)
+                    {
+                        <tr>
+                            <td style="padding-left:30px;">@itemSub.Name</td>
+                            <td style="text-align:center">
+                                @if (itemSub.DisplayHomePage == 1)
+                                {
+                                    <text>
+                                        <span class="glyphicon glyphicon-check"></span>
+                                    </text>
+                                }
+                            </td>
+                            <td style="text-align:center;">
+                                <a href="/Admin/Categories/Update/@itemSub.Id">Edit</a>&nbsp;
+                                <a href="/Admin/Categories/Delete/@itemSub.Id" onclick="return window.confirm('Are you sure?');">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+            <style type="text/css">
+                .pagination {
+                    padding: 0px;
+                    margin: 0px;
+                }
+            </style>
+            @* Hàm sau sẽ thực hiện việc hiển thị phân trang *@
+            @Html.PagedListPager((IPagedList)Model,p=>Url.Action("Index", new {page = p}))
+        </div>
+    </div>
+</div>

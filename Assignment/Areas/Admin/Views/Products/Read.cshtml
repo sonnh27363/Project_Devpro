@@ -1,0 +1,90 @@
+﻿@{
+    //import file Layout.cshtml vào đây
+    Layout = "~/Areas/Admin/Views/Shared/Layout.cshtml";
+}
+@using Assignment.Models
+@using X.PagedList.Mvc.Core
+@using System.IO
+@model X.PagedList.IPagedList<ItemProduct>
+
+@functions{
+    public MyDbContext db = new MyDbContext();
+    //lấy danh mục tương ứng với id sản phẩm truyền vào
+    public string GetCategories(int _product_id)
+    {
+        string str = "";
+        var categories = from product in db.Products join category_product in db.CategoriesProducts on product.Id equals category_product.ProductId join category in db.Categories on category_product.CategoryId equals category.Id where product.Id == _product_id select category;
+        foreach(var item in categories)
+        {
+            str += "<div>- "+item.Name+"</div>";
+        }
+        return str;
+    }
+    //lấy tag tương ứng với id sản phẩm truyền vào
+    public string GetTags(int _product_id)
+    {
+        string str = "";
+        var tags = from product in db.Products join tag_product in db.TagsProducts on product.Id equals tag_product.ProductId join tag in db.Tags on tag_product.TagId equals tag.Id where product.Id == _product_id select tag;
+        foreach(var item in tags)
+        {
+            str += "<div>- "+item.Name+"</div>";
+        }
+        return str;
+    }
+}
+
+<div class="col-md-12">
+    <div style="margin-bottom:5px;">
+        <a href="/Admin/Products/Create" class="btn btn-primary">Create</a>
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">List Product</div>
+        <div class="panel-body">
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <th style="width:100px;">Photo</th>
+                    <th>Name</th>
+                    <th style="width:150px;">Category</th>
+                    <th style="width:150px;">Tag</th>
+                    <th style="width:100px;">Discount</th>
+                    <th style="width:100px;">Price</th>
+                    <th style="width:70px;">Hot</th>
+                    <th style="width:150px;"></th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (!String.IsNullOrEmpty(item.Photo))
+                            {
+                                <img src="~/Upload/Products/@item.Photo" style="width:100px;">
+                            }
+                        </td>
+                        <td>@item.Name</td>
+                        <td>@Html.Raw(GetCategories(item.Id))</td>
+                        <td>@Html.Raw(GetTags(item.Id))</td>
+                        <td style="text-align:center;">$@item.Discount</td>
+                        <td style="text-align:center;">$@item.Price</td>
+                        <td style="text-align:center;">
+                            @if(item.Hot == 1)
+                            {
+                                <span class="fa fa-check"></span>
+                            }
+                        </td>
+                        <td style="text-align:center;">
+                            <a href="/Admin/Products/Update/@item.Id">Update</a>&nbsp;
+                            <a href="/Admin/Products/Delete/@item.Id" onclick="return window.confirm('Are you sure?');">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+            <style type="text/css">
+                .pagination {
+                    padding: 0px;
+                    margin: 0px;
+                }
+            </style>
+            @Html.PagedListPager(Model, p => Url.Action("Read","Products", new{p}))
+        </div>
+    </div>
+</div>

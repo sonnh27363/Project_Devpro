@@ -1,0 +1,356 @@
+﻿@{
+	Layout = "~/Views/Shared/Layout1.cshtml";
+}
+
+@using Assignment.Models
+@using System.Globalization;
+@functions{
+	public MyDbContext db = new MyDbContext();
+	public string GetCategoryName(int product_id)
+	{
+		ItemCategory record_category = (from product in db.Products join category_product in db.CategoriesProducts on product.Id equals category_product.ProductId join category in db.Categories on category_product.CategoryId equals category.Id where product.Id == product_id select category).FirstOrDefault();
+		string category_name = "";
+		try
+        {
+            category_name = record_category.Name;
+        }
+        catch{; }
+        return category_name;
+	}
+	//Lấy số sao
+	public int GetRating(int product_id, int star)
+	{
+		int result = db.Rating.Where(item => item.ProductId == product_id && item.Star == star).Count();
+		return result;
+	}
+}
+<section class="bread-crumb">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="menu-con">
+                    <li class="home">
+                        <a href="/Home">Trang chủ</a>
+                        <span>
+                            &nbsp;
+                            <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                            &nbsp;
+                        </span>
+                    </li>
+                    <li class="home">
+                        <a href="/Products/Category">Sản phẩm</a>
+                        <span>
+                            &nbsp;
+                            <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                            &nbsp;
+                        </span>
+                    </li>
+                    <li>
+                        <strong>
+                            <span>@Model.Content</span>
+                        </strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="row">
+        <div class="details-product">
+            <div class="details-product-left col-md-6">
+                <div class="left-image">
+                    <a href="#"><img src="~/Upload/Products/@Model.Photo" alt=""></a>
+                </div>
+            </div>
+            <div class="details-pro col-md-6">
+                <h1 class="title-product">@Model.Content</h1>
+                <div class="fw w_100">
+                    <div class="group-status">
+                        <span class="first-status">Thương hiệu: </span>
+                        <span class="first-status status-2">
+                            <span class="line">| </span>Tình trạng:
+                            <span class="status-name">
+                                <a href="#">Còn hàng</a>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="price-box">
+                        <span class="special-price">
+                            <span class="price product-price">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", Model.Discount)</span>
+                        </span>
+                        <span class="old-price">
+                            <del class="product-price-old">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", Model.Price)</del>
+                        </span>
+                    </div>
+                </div>
+                <div class="product-summary">
+                    <p>
+                        <strong>@Html.Raw(Model.Content)</strong>
+                        - @Html.Raw(Model.Description)
+                    </p>
+                </div>
+                <div class="form-product">
+                    <form>
+                        <div class="form-product-content">
+                            <div class="button-action">
+                                <a href="/Cart/Buy/@Model.Id" class="btn btn-primary">
+                                    <span class="text-1">Cho vào giỏ hàng</span>
+                                </a>
+                            </div>
+                            <div class="button-action">
+                                <a href="/WishList/Add/@Model.Id" class="btn btn-primary">
+                                    <span class="text-1">Thêm vào yêu thích</span>
+                                </a>
+                            </div>
+                            
+                        </div>
+                        <div class="call-phone">
+                                <span>Gọi đặt mua:
+                                    <a href="#">19006750</a>
+                                    để nhanh chóng đặt hàng</span>
+                            </div>
+                    </form>
+                </div>
+                <div style="clear: both;"></div>
+				<div class="product-rating">
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<a href="#" class="count-review">(@GetRating(Model.Id ,1) review)</a>
+				</div>
+				<div style="clear: both;"></div>
+				<div class="product-rating">
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<a href="#" class="count-review">(@GetRating(Model.Id ,2) review)</a>
+				</div>
+				<div style="clear: both;"></div>
+				<div class="product-rating">
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<a href="#" class="count-review">(@GetRating(Model.Id ,3) review)</a>
+				</div>
+				<div style="clear: both;"></div>
+				<div class="product-rating">
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<a href="#" class="count-review">(@GetRating(Model.Id ,4) review)</a>
+				</div>
+				<div style="clear: both;"></div>
+				<div class="product-rating">
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<i class="fa fa-star" aria-hidden="true"></i>
+					<a href="#" class="count-review">(@GetRating(Model.Id ,5) review)</a>
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <section class="section-service">
+                <div class="service-content">
+                    <div class="col-item-srv">
+                        <span class="iconx">
+                            <img src="https://bizweb.dktcdn.net/100/336/334/themes/802154/assets/service_1.png?1677439645301"
+                                alt="">
+                        </span>
+                        <div class="content-srv">
+                            <span class="title-service">Giao hàng toàn quốc</span>
+                            <br>
+                            <span class="content">Giao hàng toàn quốc với mức phí ưu đãi nhất</span>
+                        </div>
+                    </div>
+                    <div class="col-item-srv">
+                        <span class="iconx">
+                            <img src="https://bizweb.dktcdn.net/100/336/334/themes/802154/assets/service_2.png?1677439645301"
+                                alt="">
+                        </span>
+                        <div class="content-srv">
+                            <span class="title-service">Giao hàng toàn quốc</span>
+                            <br>
+                            <span class="content">Giao hàng toàn quốc với mức phí ưu đãi nhất</span>
+                        </div>
+                    </div>
+                    <div class="col-item-srv">
+                        <span class="iconx">
+                            <img src="https://bizweb.dktcdn.net/100/336/334/themes/802154/assets/service_3.png?1677439645301"
+                                alt="">
+                        </span>
+                        <div class="content-srv">
+                            <span class="title-service">Giao hàng toàn quốc</span>
+                            <br>
+                            <span class="content">Giao hàng toàn quốc với mức phí ưu đãi nhất</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="tab-h">
+            <div class="col-md-12">
+                <div class="product-tab">
+                    <ul class="tab-ul">
+                        <li class="li">
+                            <h3>Mô tả sản phẩm</h3>
+                        </li>
+                        <li>
+                            <h3>Hỏi đáp về sản phẩm</h3>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <table class="table table-striped">
+                            <tr>
+                                <td>SKU</td>
+                                <td>Maybelline</td>
+                            </tr>
+                            <tr>
+                                <td>Thương hiệu</td>
+                                <td>Trung Quốc</td>
+                            </tr>
+                            <tr>
+                                <td>Sản xuất tại</td>
+                                <td>Xem trên bao bì sản phẩm</td>
+                            </tr>
+                            <tr>
+                                <td>Hạn sử dụng</td>
+                                <td>3.9g</td>
+                            </tr>
+                            <tr>
+                                <td>Trọng lượng</td>
+                                <td>1338927607453</td>
+                            </tr>
+                        </table>
+                        <p class="cmt">
+                            <strong>Son Ba Màu Maybelline Bitten 3.9g</strong> &nbsp; - &nbsp; Kết cấu ba màu độc đáo tạo hiệu ứng  môi ombre  3D thời thượng, màu sắc loang nước sống động cho đôi môi căng mọng đẹp tự nhiên. Công thức Ultra creamy dưỡng ẩm môi suốt 12h liền.
+                        </p>
+                        <p><strong>Tính năng sản phẩm</strong></p>
+                        <ul class="tab-cmt">
+                            <li>Hiệu ứng loang màu nước tạo nên màu sắc sống động cho đôi môi đẹp tự nhiên.</li>
+                            <li>Công thức Ultra Creamy cho đôi môi căng mọng, dưỡng ẩm môi suốt 12h liền.</li>
+                            <li>3 Shades màu OMBRE từ đậm sang nhạt trong 1 cây son tạo hiệu ứng ombre môi chỉ với 1 lần tô son.</li>
+                        </ul>
+                        <p style="margin: 15px 0 15px 0;"><strong>Loại da phù hợp</strong></p>
+                        <p>Thích hợp cho mọi làn da.</p>
+                        <p style="margin: 15px 0 15px 0;"><strong>Màu sắc</strong></p>
+                        <ul class="tab-cmt">
+                            <li>Son Ba Màu Maybelline Bitten - OR01</li>
+                            <li>Son Ba Màu Maybelline Bitten - RD01</li>
+                            <li>Son Ba Màu Maybelline Bitten - PK01</li>
+                            <li>Son Ba Màu Maybelline Bitten - RD03</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<section>
+    <div class="container">
+        <div class="hotdeal">
+            <div class="heading-hotdeal">
+                <h2 class="title"><a href="#">SẢN PHẨM LIÊN QUAN</a></h2>
+            </div>
+        </div>
+        <div class="border-wrap">
+            <ul>
+                <li>
+                    <div class="product-border">
+                        <div class="product-thumbnail">
+                            <a href="#"><img
+                                    src="https://bizweb.dktcdn.net/thumb/large/100/336/334/products/anhchupmanhinh20170829luc44344.png?v=1540268241540"></a>
+                        </div>
+                        <div class="flash-sale"><img
+                                src="https://bizweb.dktcdn.net/100/336/334/themes/802154/assets/label_sale.png?1610010652943"
+                                alt=""></div>
+                        <div class="product-info">
+                            <h3 class="producut-name">
+                                <a class="spbanchay" href="#">Son thỏi lì 3ce Lip color Matte - #907</a>
+                            </h3>
+                            <div class="product-price">
+                                <span class="sale">270.000đ</span>
+                                <span class="del">300.000đ</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="product-border">
+                        <div class="product-thumbnail">
+                            <a href="#"><img
+                                    src="https://bizweb.dktcdn.net/thumb/large/100/336/334/products/2016102708060633fcb32e55e5c72d-69f0b5ad-bc33-4bfd-9452-b823201a042e.jpg?v=1540780704243"></a>
+                        </div>
+                        <div class="flash-sale"><img
+                                src="https://bizweb.dktcdn.net/100/336/334/themes/802154/assets/label_sale.png?1610010652943"
+                                alt=""></div>
+                        <div class="product-info">
+                            <h3 class="producut-name">
+                                <a class="spbanchay" href="#">Son Thỏi Apieu True Fitting Lipstick</a>
+                            </h3>
+                            <div class="product-price">
+                                <span class="sale">145.000đ</span>
+                                <span class="del">200.000đ</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="product-border">
+                        <div class="product-thumbnail">
+                            <a href="#"><img
+                                    src="https://bizweb.dktcdn.net/thumb/large/100/336/334/products/1.png?v=1540268233133"></a>
+                        </div>
+                        <div class="flash-sale"><img
+                                src="https://bizweb.dktcdn.net/100/336/334/themes/802154/assets/label_sale.png?1610010652943"
+                                alt=""></div>
+                        <div class="product-info">
+                            <h3 class="producut-name">
+                                <a class="spbanchay" href="#">Kem chống nắng AHA</a>
+                            </h3>
+                            <div class="product-price">
+                                <span class="sale">350.000đ</span>
+                                <span class="del">370.000đ</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="product-border">
+                        <div class="product-thumbnail">
+                            <a href="#"><img
+                                    src="https://bizweb.dktcdn.net/thumb/large/100/336/334/products/sonchristianlouboutindiva.jpg?v=1540268237143"></a>
+                        </div>
+                        <div class="flash-sale"><img
+                                src="https://bizweb.dktcdn.net/100/336/334/themes/802154/assets/label_sale.png?1610010652943"
+                                alt=""></div>
+                        <div class="product-info">
+                            <h3 class="producut-name">
+                                <a class="spbanchay" href="#">Son Christian Louboutin Diva</a>
+                            </h3>
+                            <div class="product-price">
+                                <span class="sale">2.850.000đ</span>
+                                <span class="del">2.950.000đ</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+<style>
+    .count-review{
+        font-size: 14px;
+        line-height: 20px;
+        color: #888888;
+        font-style: italic;
+    }
+    .fa-star{
+        color: gold;
+    }
+</style>

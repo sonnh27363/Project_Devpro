@@ -1,0 +1,163 @@
+﻿@using Assignment.Models;
+@using Assignment.MyFolder;
+<header class="header">
+    <div class="wrap_to_bar">
+        <div class="container">
+            <div class="row">
+                <div class="topbar">
+                    <div class="col-md-9">
+                        <div class="topbar_left">
+                            <ul>
+                                <li>
+                                    <span class="icon-header">
+                                        <i class="fa fa-phone" aria-hidden="true"></i>
+                                    </span>
+                                    <a href="#">19006750 |</a>
+                                </li>
+                                <li>
+                                    <span class="icon-header">
+                                        <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                                    </span>
+                                    <a href="#">coolteam@gmail.com |</a>
+                                </li>
+                                <li>
+                                    <span class="icon-header">
+                                        <i class="fa fa-university" aria-hidden="true"></i>
+                                    </span>
+                                    <a href="#">Kiểm tra đơn hàng |</a>
+                                </li>
+                                <li>
+                                    <span class="icon-header">
+                                        <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                    </span>
+                                    <a href="#">Hệ thống cửa hàng |</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="topbar_left">
+                            <ul>
+								    @*kiểm tra người dùng đã đăng nhập chưa*@
+                                @if (!String.IsNullOrEmpty(Context.Session.GetString("customer_email")))
+                                {
+                                    <li class="menu-item"><a href="#">Xin chào: @Context.Session.GetString("customer_email") |</a></li>
+                                    <li class="menu-item"><a title="Register or Login" href="/Account/Logout">Logout |</a></li>
+                                }
+                                else
+                                {
+                                    <li class="menu-item"><span style="margin-right: 5px;"><i class="fa fa-sign-in" aria-hidden="true"></i></span><a title="Register or Login" href="/Account/Login">Login |</a></li>
+                                    <li class="menu-item"><a title="Register or Login" href="/Account/Register">Register</a></li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mid-header">
+        <div class="container">
+            <div class="row">
+                <div class="header-main">
+                    <div class="col-md-3">
+                        <div class="logo">
+                            <a href="#">
+                                @{
+			                        List<ItemAdv> list_adv3 = MyClass.GetAdv(3);
+		                        }
+		                        @foreach(var item in list_adv3)
+		                        {
+				                    <img src="~/Upload/Adv/@item.Photo" alt="" >
+		                        }
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="header-search">
+                            <form action="">
+                                <input type="text" id="search" name="search" placeholder="Tìm kiếm sản phẩm ...">
+                                <span>
+                                    <button type="button" onclick="location.href='/Search/SearchProducts?key='+document.getElementById('search').value;">
+                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                    </button>
+                                </span>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="account-cart">
+                            <ul>
+                                <li>
+                                    @{
+			                            List<ItemAdv> list_adv5 = MyClass.GetAdv(5);
+		                            }
+		                            @foreach(var item in list_adv5)
+		                            {
+				                        <a href="/Account/Login"><img src="~/Upload/Adv/@item.Photo"></a>
+		                            }
+                                </li>
+                                <li>
+                                    @{
+			                            List<ItemAdv> list_adv4 = MyClass.GetAdv(4);
+		                            }
+		                            @foreach(var item in list_adv4)
+		                            {
+				                        <a href="/Cart"><img src="~/Upload/Adv/@item.Photo"></a>
+                                        <span class="count-item">@Cart.CartQuantity(Context.Session)</span>
+		                            }
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" style="height: 60px;">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent"
+            style="height: 60px; background-color: #ff6564;">
+            <div class="container">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/Home"
+                            style="text-decoration: none;color: white;font-weight: 500;font-size: 15px;text-transform: uppercase;">Trang
+                            chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/Introduce"
+                            style="text-decoration: none;color: white;font-weight: 500;font-size: 15px;text-transform: uppercase;">Giới
+                            thiệu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/Products/Category"
+                            style="text-decoration: none;color: white;font-weight: 500;font-size: 15px;text-transform: uppercase;">Sản phẩm</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/Cart"
+                            style="text-decoration: none;color: white;font-weight: 500;font-size: 15px;text-transform: uppercase;">Giỏ hàng</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/WishList"
+                            style="text-decoration: none;color: white;font-weight: 500;font-size: 15px;text-transform: uppercase;">Yêu thích</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/News"
+                            style="text-decoration: none;color: white;font-weight: 500;font-size: 15px;text-transform: uppercase;">Tin tức</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/Contact"
+                            style="text-decoration: none;color: white;font-weight: 500;font-size: 15px;text-transform: uppercase;">Liên hệ</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+<style>
+    .wrap-login-item .form-item .btn {
+        background: red;
+    }
+</style>

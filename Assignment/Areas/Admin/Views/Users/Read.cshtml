@@ -1,0 +1,39 @@
+﻿@{
+	//import file Layout.cshtml vào đây
+	Layout = "~/Areas/Admin/Views/Shared/Layout.cshtml";
+}
+@using Assignment.Models
+@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<ItemUser>
+<div class="col-md-12">
+    <div style="margin-bottom:5px;">
+        <a href="/Admin/Users/Create" class="btn btn-primary">Create</a>
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">List User</div>
+        <div class="panel-body">
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <th>Fullname</th>
+                    <th>Email</th>
+                    <th style="width:150px;"></th>
+                </tr>
+                @foreach(var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Email</td>
+                        <td style="text-align:center;">
+                            <a href="/Admin/Users/Update/@item.Id">Update</a>&nbsp;
+                            <a href="/Admin/Users/Delete/@item.Id" onclick="return window.confirm('Are you sure?');">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+            <style type="text/css">
+                .pagination{padding:0px; margin:0px;}
+            </style>
+            @Html.PagedListPager(Model, p=> Url.Action("Read","Users",new{p}))
+        </div>
+    </div>
+</div>

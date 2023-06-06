@@ -1,0 +1,122 @@
+﻿@using Assignment.Models;
+@{
+	Layout = "~/Views/Shared/Layout1.cshtml";
+}
+@functions{
+	public MyDbContext db = new MyDbContext();
+    public List<ItemNews> ListNews()
+	{
+		List<ItemNews> list_record = db.News.OrderByDescending(item=>item.Id).ToList();
+		return list_record;
+	}
+    //Lấy 3 tin tức nổi bật (Hot == 1)
+    public List<ItemNews> LatesNews()
+	{
+		List<ItemNews> list_record = db.News.Where(item => item.Hot == 1).OrderByDescending(item=>item.Id).Skip(0).Take(3).ToList();
+		return list_record;
+	}
+}
+<section class="bread-crumb">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="menu-con">
+                    <li class="home">
+                        <a href="/Home">Trang chủ</a>
+                        <span>
+                            &nbsp;
+                            <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                            &nbsp;
+                        </span>
+                    </li>
+                    <li>
+                        <strong>
+                            <span>Tin tức</span>
+                        </strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="main-content">
+                <div class="news-title">
+                    <h1>Tin tức</h1>
+                </div>
+                <div class="row">
+                    @{
+					List<ItemNews> list_news = ListNews();
+					}
+                    @foreach(var item in list_news)
+                    {
+                        <div class="col-md-6">
+                        <div class="content-news">
+                            <div class="product-news">
+                                <div class="product-img">
+                                    <a href="/News/Details/@item.Id"><img src="~/Upload/News/@item.Photo" alt=""> </a>
+                                    <div class="content-left">
+                                        <span class="top-content">23</span>
+                                        <span class="bot-content">Tháng 10</span>
+                                    </div>
+                                </div>
+                                <div class="product-info">
+                                    <h3><a href="/News/Details/@item.Id">@Html.Raw(item.Name)</a></h3>
+                                    <span class="time-post">
+                                        <i class="fa fa-user" aria-hidden="true"></i>
+                                        Đăng bởi: Cool Team
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="product-cmt">
+                                <p>@Html.Raw(item.Content)</p>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="menu-right">
+                <div class="aside-title">
+                    <h2>Danh mục tin tức</h2>
+                </div>
+                <div class="aside-content">
+                    <nav class="nav-category">
+                        <ul>
+                            <li><a href="/Home">Trang chủ</a></li>
+                            <li><a href="/Introduce">Giới thiệu</a></li>
+                            <li><a href="/Products/Category">Sản phẩm</a></li>
+                            <li><a href="/News">Tin tức</a></li>
+                            <li><a href="/Contact">Liên hệ</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="menu-right">
+                <div class="aside-title1">
+                    <h2><a class="title" href="#">Tin tức nổi bật</a></h2>
+                </div>
+                <div class="aside-content">
+                    @{
+					    List<ItemNews> lates_news = LatesNews();
+					}
+                    @foreach(var item in lates_news)
+                    {
+                        <div class="product-list">
+                            <div class="thumb-left">
+                                <a href="/News/Details/@item.Id"><img src="~/Upload/News/@item.Photo" width="100" height="67" alt=""></a>
+                            </div>
+                            <div class="name-right">
+                                <h3><a href="/News/Details/@item.Id">@Html.Raw(item.Name)</a></h3>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

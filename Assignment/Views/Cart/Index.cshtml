@@ -1,0 +1,133 @@
+﻿@{
+	Layout = "~/Views/Shared/Layout1.cshtml";
+}
+@using Assignment.Models
+@using System.Globalization;
+@{
+	//Lấy biến truyền từ ViewBag
+	List<Item> cart = ViewBag.cart as List<Item>;
+}
+
+
+    <section class="bread-crumb">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="menu-con">
+                        <li class="home">
+                            <a href="/Home">Trang chủ</a>
+                            <span>
+                                &nbsp;
+                                <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                &nbsp;
+                            </span>
+                        </li>
+                        <li>
+                            <strong>
+                                <span>Giỏ hàng</span>
+                            </strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="container">
+        <div class="main-cart">
+            <div class="header-cart">
+                <h1 class="title-cart"><a href="#">Giỏ hàng của bạn</a></h1>
+            </div>
+            @if (cart != null)
+            {
+                <div class="cart-page">
+                    <div class="col-md-9">
+                        <form id="frm" method="post" action="/Cart/Update">
+                            <div class="bg-srcoll">
+                                <div class="cart-thead">
+                                    <div class="text-left" style="width: 43%;">
+                                        <span>Sản phẩm</span>
+                                    </div>
+                                    <div class="a-center" style="width: 19%;">
+                                        <span class="gia" style="padding-left: 40px;">Giá</span>
+                                    </div>
+                                    <div class="a-center" style="width: 13%;padding-left: 20px;">Số lượng</div>
+                                    <div class="a-center" style="width: 25%; padding-left: 60px;">Thành tiền</div>
+                                </div>
+                                <div class="cart-tbody">
+                                    <div class="cart-item">
+                                        @foreach (var item in cart)
+                                        {
+                                            <ul>
+                                                <li style="width: 15%">
+                                                    <div class="cart-img">
+                                                        <a href="/Products/Detail/@item.ProductRecord.Id"><img src="~/Upload/Products/@item.ProductRecord.Photo" alt=""></a>
+                                                    </div>
+                                                </li>
+                                                <li style="width: 28%">
+                                                    <div class="cart-info">
+                                                        <h3><a href="/Products/Detail/@item.ProductRecord.Id">@item.ProductRecord.Name</a></h3>
+                                                        <a href="/Cart/Remove/@item.ProductRecord.Id" class="remove-item">
+                                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                                            Xóa sản phẩm
+                                                        </a>
+                                                    </div>
+                                                </li>
+                                                <li style="width: 20%">
+                                                    <div class="item-price">
+                                                        <span style="padding-left: 20px;">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", item.ProductRecord.Discount)</span>
+                                                    </div>
+                                                </li>
+                                                <li style="width: 15%;padding-top: 30px;">
+                                                    <div class="quantity">
+                                                        <div class="">
+                                                        <input type="number" name="product_@item.ProductRecord.Id" value="@item.Quantity" data-max="120" pattern="[0-9]*" style="line-height:30px; width:50px; border:1px solid #dddddd;">
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li style="width: 22%">
+                                                    <div class="item-price">
+                                                        <span style="padding-left: 40px;">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", (item.ProductRecord.Discount * item.Quantity))</span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="sumary-btn">
+                                    <div class="btn-bottom">
+                                        <a href="/Products/Category"><span>Tiếp tục mua hàng</span></a>
+                                    </div>
+                                    <div class="btn-bottom">
+                                        <a href="#" onclick="document.getElementById('frm').submit();"><span>Cập nhật giỏ hàng</span></a>
+                                    </div>
+                                    <div class="btn-bottom">
+                                        <a href="/Cart/Destroy"><span>Xóa toàn bộ giỏ hàng</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    @if(Cart.CartQuantity(Context.Session) > 0)
+                    {
+                        <div class="col-md-3 cart-submit">
+                            <div class="totals">
+                                <div class="wrap-checkprice">
+                                    <div class="li-table">
+                                        <span class="li-left">Tạm tính:</span>
+                                        <span class="li-right">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", Cart.CartTotal(Context.Session))</span>
+                                    </div>
+                                    <div class="li-table">
+                                        <span class="li-left">Thành tiền:</span>
+                                        <span class="li-right pink">@string.Format(new CultureInfo("vi-VN"), "{0:C0}", Cart.CartTotal(Context.Session))</span>
+                                    </div>
+                                    <div class="wrap-btn">
+                                        <a href="/Cart/CheckOut" type="button"><span>Tiến hành thanh toán</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
